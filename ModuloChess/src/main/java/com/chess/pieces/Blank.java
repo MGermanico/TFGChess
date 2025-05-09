@@ -13,7 +13,7 @@ import javax.swing.JPanel;
  * @author migue
  */
 @JsonTypeName("blank")
-public class Blank extends DisplayableCell{
+public class Blank extends DisplayableCell {
 
 
     public Blank(Position position) {

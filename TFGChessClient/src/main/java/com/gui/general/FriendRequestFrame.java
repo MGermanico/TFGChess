@@ -34,28 +34,6 @@ import javax.swing.JSeparator;
  * @author migue
  */
 public class FriendRequestFrame extends JDialog{
-    
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setVisible(true);
-        frame.setSize(300, 300);
-         new FriendRequestFrame(frame, new ArrayList(List.of(
-                 "AAA",
-                 "BBB", 
-                 "BBB", 
-                 "BBB", 
-                 "BBB", 
-                 "BBB", 
-                 "BBB", 
-                 "BBB", 
-                 "BBB", 
-                 "BBB", 
-                 "BBB", 
-                 "BBB", 
-                 "BBB", 
-                 "CCC"
-         )), new Point(100, 100));
-    }
 
     public FriendRequestFrame(JFrame parent, List<String> friendRequests, Point position) {
         super(parent, "Mi Modal", true);
@@ -157,6 +135,7 @@ class DisplayableFriendRequestBuilder {
         horizontal.setBorder(BorderFactory.createRaisedBevelBorder());
         
         JLabel usernameLabel = new JLabel("  " + username);
+        usernameLabel.setForeground(Color.BLACK);
         
         Dimension labelDimension = new Dimension(180,50);
         usernameLabel.setMaximumSize(labelDimension);

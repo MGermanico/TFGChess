@@ -52,7 +52,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     private String otherUsername;
     private ChessManager chessManager = null;
     private boolean imWhite = false;
-    private int cellSize = 45;
+    private int cellSize = 35;
     private ChatPanel logPanel;
     private ChatPanel chatPanel;
     private Position lastPositionClicked = null;
@@ -61,6 +61,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         add(new PlayerJoinedAction());
         add(new JoinedAction());
         add(new UpdateBoardAction());
+        add(new GameMessageAction());
     }};
     
     public Lobby(PrincipalFrame principalFrame, Request createRequest) {
@@ -356,9 +357,20 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     }// </editor-fold>//GEN-END:initComponents
 
     private void commentTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commentTextFieldActionPerformed
-        this.chatPanel.addText(Client.getUsername(), this.commentTextField.getText(), Color.BLUE);
-        this.commentTextField.setText("");
-        this.chatPanel.validate();
+        try {
+            String msg = this.commentTextField.getText();
+            Client.sendRequest(
+                    new RequestBuilder("gamemessage")
+                            .put("text", msg)
+                            .build()
+            );
+            
+            this.chatPanel.addText(Client.getUsername(), msg, Color.BLUE);
+            this.commentTextField.setText("");
+            this.chatPanel.validate();
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_commentTextFieldActionPerformed
 
 
@@ -437,6 +449,21 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         @Override
         public String getType() {
             return "updatedBoard";
+        }
+    }
+    private class GameMessageAction implements Action{
+        @Override
+        public void execute(Request request) {
+            String msg = request.get("text");
+            if (msg != null) {
+                chatPanel.addText(otherUsername, msg, Color.GREEN);
+                chatPanel.validate();
+            }
+            
+        }
+        @Override
+        public String getType() {
+            return "gamemessage";
         }
     }
 }

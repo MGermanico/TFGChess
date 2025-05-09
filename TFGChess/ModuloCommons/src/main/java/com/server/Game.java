@@ -131,6 +131,17 @@ public class Game {
         
         return true;
     }
+
+    void sendMessage(ClientConn sender, String message) {
+        RequestBuilder builder =  RequestBuilder.createRequest("gamemessage");
+        ClientConn reciever;
+        if (sender.equals(ownerPlayer)) {
+            reciever = secondPlayer;
+        }else{
+            reciever = ownerPlayer;
+        }
+        reciever.sendRequest(builder.put("text", message).build());
+    }
     
     
     
