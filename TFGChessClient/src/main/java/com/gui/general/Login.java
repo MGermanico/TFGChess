@@ -193,7 +193,7 @@ public class Login extends javax.swing.JPanel implements Requestable{
     }//GEN-LAST:event_loginButtonActionPerformed
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
-        principalFrame.setUp(PrincipalFrame.SETUP_REGISTER);
+        principalFrame.setUp(PrincipalFrame.SETUP.SETUP_REGISTER);
     }//GEN-LAST:event_registerButtonActionPerformed
 
     private void showPassButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPassButtonActionPerformed
@@ -259,7 +259,7 @@ public class Login extends javax.swing.JPanel implements Requestable{
     private class LogedAction implements Action{
         @Override
         public void execute(Request request) {
-            principalFrame.setUp(PrincipalFrame.SETUP_MENU);
+            principalFrame.setUp(PrincipalFrame.SETUP.SETUP_MENU);
         }
         @Override
         public String getType() {

@@ -10,7 +10,6 @@ import com.chess.pieces.DisplayableCell;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.utils.ChessCode;
-import com.utils.MathUtils;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -100,9 +99,9 @@ public abstract class RectilinealMovement extends Movement{
         
         int distance;
         if (toUp != null) {
-            distance = MathUtils.distance(from.getRow(), to.getRow());
+            distance = super.distance(from.getRow(), to.getRow());
         }else{
-            distance = MathUtils.distance(from.getColumn(), to.getColumn());
+            distance = super.distance(from.getColumn(), to.getColumn());
         }
         
         if(maxSteps != null && distance > maxSteps) return ChessCode.IS_SO_FAR;

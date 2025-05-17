@@ -9,7 +9,6 @@ import com.chess.general.Position;
 import com.chess.pieces.DisplayableCell;
 import com.chess.pieces.Piece;
 import com.utils.ChessCode;
-import com.utils.MathUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,10 +24,6 @@ public class VerticalMovement extends RectilinealMovement{
         super(toUp, null, maxSteps);
     }
 
-    public void setMaxSteps(Integer maxSteps) {
-        this.maxSteps = maxSteps;
-    }
-
     @Override
     protected boolean isCorrectWay(Position from, Position to) {
         return from.isUnderOf(to) == getToUp();
@@ -40,6 +35,18 @@ public class VerticalMovement extends RectilinealMovement{
         
         return ChessCode.OK;
     }
+    
+    public void setMaxSteps(Integer maxSteps) {
+        this.maxSteps = maxSteps;
+    }
+
+    @Override
+    public String toString() {
+        return "vertical U,R,MAX = " + this.toUp + " , " + this.toRight + " , " + this.maxSteps;
+    }
+    
+    
+    
     // <editor-fold defaultstate="collapsed" desc="JSonMapperDependencies">
     public VerticalMovement() {
     }

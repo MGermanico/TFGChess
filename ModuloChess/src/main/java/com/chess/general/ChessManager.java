@@ -71,24 +71,29 @@ public class ChessManager {
                 ) return ChessCode.KING_EXPOSED;
         
         int code = chessboard.move(from, to);
-        System.out.println("code: " + code);
+        System.out.println("chessmanager:  code: " + code);
         
         if(code != ChessCode.OK) return code;
         
         if (checkCode != ChessCode.OK) {
+            System.out.println("jaque o algo");
             boolean whiteCheckmate = true;
             if(checkCode == ChessCode.BLACK_CHECK) whiteCheckmate = false;
-            if(chessboard.anyMove(whiteCheckmate)) {
+            if(chessboard.anyStoppingCheckMove(whiteCheckmate)) {
                 if (whiteCheckmate) {
                     state = STATE_BLACK_WON;
                 }else{
                     state = STATE_WHITE_WON;
                 }
                 return ChessCode.CHECKMATE;
+            }else{
+                System.out.println("va a returnear cosigo " + checkCode);
             }
+            whiteTurn = !whiteTurn;
             return checkCode;
         }else{
-            if(chessboard.anyMove(!whiteTurn)) {
+            System.out.println("sin jaque TODO- STALEMATE");
+            if(chessboard.anyStoppingCheckMove(!whiteTurn)) {
                 state = STATE_DRAW;
                 return ChessCode.STALEMATE;
             }
@@ -109,9 +114,7 @@ public class ChessManager {
         return chess;
     }
     public static ChessManager fromJSON(File jsonFile) throws Exception{
-        String json = "";
-        ObjectMapper objectMapper = new ObjectMapper();
-        ChessManager chess;
+        String json;
         
         try(Scanner sc = new Scanner(jsonFile)){
             json = sc.nextLine();
@@ -134,6 +137,10 @@ public class ChessManager {
 
     public boolean isWhiteTurn() {
         return whiteTurn;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 
     public int getState() {

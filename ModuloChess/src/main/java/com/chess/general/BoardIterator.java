@@ -7,6 +7,7 @@ package com.chess.general;
 import com.chess.pieces.Blank;
 import com.chess.pieces.DisplayableCell;
 import com.chess.pieces.Piece;
+import com.chess.pieces.pieces.Pawn;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -63,6 +64,18 @@ public class BoardIterator implements Iterator<DisplayableCell> {
         public Piece getPiece(){
             if(isBlank()) return null;
             return (Piece) board[row][column];
+        }
+        
+        public boolean isPawn(){
+            if(isBlank()) return false;
+            return board[row][column].getClass() == Pawn.class;
+        }
+        
+        public Pawn getPawn(){
+            if(isBlank()) return null;
+            if(!isPawn()) return null;
+            
+            return (Pawn) board[row][column];
         }
         
     }

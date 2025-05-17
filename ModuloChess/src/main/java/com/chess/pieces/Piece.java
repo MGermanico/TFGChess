@@ -51,11 +51,11 @@ public abstract class Piece extends DisplayableCell{
     public Piece(Position position, boolean white) {
         this.position = position;
         this.white = white;
-        setMovements();
+        addMovements();
     }
     
     
-    public abstract void setMovements();
+    public abstract void addMovements();
     
     public int move(Position position, DisplayableCell[][] boardInstance){
         int code;
@@ -99,7 +99,6 @@ public abstract class Piece extends DisplayableCell{
         this.white = white;
     }
     public Piece() {
-        
     }
 
     public List<Movement> getMovements() {

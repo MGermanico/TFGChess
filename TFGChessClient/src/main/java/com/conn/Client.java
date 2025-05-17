@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -38,11 +39,11 @@ public class Client {
     
     public static void main(String[] args) {
         
+        try {
             try {
-                try {
                 UIManager.setLookAndFeel(new FlatDarkLaf());
                 JFrame.setDefaultLookAndFeelDecorated(true);
-            } catch (Exception e) {
+            } catch (UnsupportedLookAndFeelException e) {
                 e.printStackTrace();
             }
             frame = new PrincipalFrame();

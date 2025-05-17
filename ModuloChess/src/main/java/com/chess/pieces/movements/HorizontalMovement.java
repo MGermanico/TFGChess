@@ -8,7 +8,6 @@ import com.chess.general.Chessboard;
 import com.chess.general.Position;
 import com.chess.pieces.DisplayableCell;
 import com.utils.ChessCode;
-import com.utils.MathUtils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +33,12 @@ public class HorizontalMovement extends RectilinealMovement{
         
         return ChessCode.OK;
     }
+    
+    @Override
+    public String toString() {
+        return "horizontal U,R,MAX = " + this.toUp + " , " + this.toRight + " , " + this.maxSteps;
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="JSonMapperDependencies">
     public HorizontalMovement() {
     }

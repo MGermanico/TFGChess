@@ -12,6 +12,7 @@ exec\server\login.class
 com\db\impl\PlayerImpl.class
 com\server\ClientConn$RemoveFriendRequestAction.class
 exec\chess\GUITest$3.class
+com\server\ClientConn$SendGameMessage.class
 com\db\DatabaseManager.class
 com\server\HearThread.class
 com\db\dbUtils\PasswordUtils.class
@@ -32,7 +33,6 @@ com\db\pojo\keys\PlayerFriendKey.class
 exec\chess\test01.class
 com\db\impl\PlayerFriendRequestImpl.class
 com\utils\ChessCode.class
-com\utils\MathUtils.class
 com\db\pojo\PlayerFriendRequest.class
 com\db\pojo\Player.class
 exec\chess\GUITest$2.class

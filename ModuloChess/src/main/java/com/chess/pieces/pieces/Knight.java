@@ -22,7 +22,7 @@ public class Knight extends Piece{
     }
 
     @Override
-    public void setMovements() {
+    public void addMovements() {
         KnightMovement knightMovement = new KnightMovement();
         
         getMovements().add(knightMovement);

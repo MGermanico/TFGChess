@@ -17,7 +17,6 @@ import com.chess.pieces.pieces.Rook;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.utils.ChessCode;
-import com.utils.MathUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,7 +48,12 @@ public class Chessboard {
         while(it.hasNext()){
             it.getCell().setPosition(new Position(it.row, it.column));
             if (!it.isBlank()) {
-                it.getPiece().setMovements();
+                it.getPiece().addMovements();
+                if (it.isPawn()) {
+                    if (it.getPawn().hasMoved()) {
+                        it.getPawn().setVerticalMovementMaxSteps(1);
+                    }
+                }
             }
             it.next();
         }
@@ -204,8 +208,8 @@ public class Chessboard {
         return checkIf(cloneBoard(), whiteKingPosition, blackKingPosition);
     }
     
-    public boolean anyMove(boolean white){
-//        System.out.println("------------- checkmate ? ----------------");
+    public boolean anyStoppingCheckMove(boolean white){
+        System.out.println("------------- checkmate ? ----------------");
         Set<Position> actualMovements;
         BoardIterator it = new BoardIterator(board);
         Piece actualPiece;
@@ -214,15 +218,15 @@ public class Chessboard {
         boolean blackCheck;
         while(it.hasNext()){
             if (!it.isBlank()) {
-//                System.out.print("---piece ");
+                System.out.print("---piece ");
                 actualPiece = it.getPiece();
-//                System.out.println(actualPiece.getPosition());
+                System.out.println(actualPiece.getPosition());
                 if (actualPiece.isWhite() == white) {
                     actualMovements = actualPiece.whereCanIMove(board);
                     actualMovements.addAll(actualPiece.whereCanIAttack(board));
                     
                     for (Position actualMovement : actualMovements) {
-//                        System.out.println("   ---movement to " + actualMovement);
+                        System.out.println("   ---movement to " + actualMovement);
                         checkCode = checkIfMove(actualPiece.getPosition(), actualMovement);
                         whiteCheck = checkCode == ChessCode.WHITE_CHECK || checkCode == ChessCode.BOTH_CHECK;
                         blackCheck = checkCode == ChessCode.BLACK_CHECK || checkCode == ChessCode.BOTH_CHECK;
@@ -232,7 +236,7 @@ public class Chessboard {
                         ) return false;
                     }
                 }else{
-//                    System.out.println("x");
+                    System.out.println("x");
                 }
             }
             it.next();
@@ -358,7 +362,7 @@ public class Chessboard {
     }
 
     public void setPassantPosition(Position from, Position to) {
-        if (MathUtils.distance(from.getRow(), to.getRow()) == 2) {
+        if (distance(from.getRow(), to.getRow()) == 2) {
             if (from.isUpperOf(to)) {
                 passantPosition = from.clone().positionFromHere(-1, 0);
             }else if(from.isUnderOf(to)){
@@ -380,8 +384,8 @@ public class Chessboard {
             toUp = false;
         }else return false;
         
-        if(MathUtils.distance(pawnPosition.getRow(), to.getRow()) != 1) return false;
-        if(MathUtils.distance(pawnPosition.getColumn(), to.getColumn()) != 1) return false;
+        if(distance(pawnPosition.getRow(), to.getRow()) != 1) return false;
+        if(distance(pawnPosition.getColumn(), to.getColumn()) != 1) return false;
         
         if(pawn.isWhite() == !toUp) return false;
         
@@ -431,6 +435,10 @@ public class Chessboard {
             setCell(promote.clone(), piece);
             promote = null;
         return true;
+    }
+    
+    private int distance(int n1, int n2){
+        return Math.abs(n1 - n2);
     }
     
     // <editor-fold defaultstate="collapsed" desc="JSonMapperDependencies">

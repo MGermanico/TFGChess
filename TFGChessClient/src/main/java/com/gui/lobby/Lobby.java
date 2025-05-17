@@ -9,6 +9,8 @@ import com.chess.general.Chessboard;
 import com.chess.general.Position;
 import com.chess.pieces.DisplayableCell;
 import com.chess.pieces.Piece;
+import com.chess.pieces.movements.Movement;
+import com.chess.pieces.pieces.Pawn;
 import com.connutils.Request;
 import com.gui.general.Requestable;
 import com.conn.Client;
@@ -16,6 +18,7 @@ import com.connutils.Action;
 import com.connutils.RequestBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gui.general.PrincipalFrame;
+import com.utils.ChessCode;
 import com.utils.ChessUtils;
 import com.utils.GUIUtils;
 import com.utils.MathUtils;
@@ -28,6 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -52,7 +56,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     private String otherUsername;
     private ChessManager chessManager = null;
     private boolean imWhite = false;
-    private int cellSize = 45;
+    private int cellSize = 80;
     private ChatPanel logPanel;
     private ChatPanel chatPanel;
     private Position lastPositionClicked = null;
@@ -61,6 +65,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         add(new PlayerJoinedAction());
         add(new JoinedAction());
         add(new UpdateBoardAction());
+        add(new GameMessageAction());
     }};
     
     public Lobby(PrincipalFrame principalFrame, Request createRequest) {
@@ -72,6 +77,8 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         initComponents();
         GUIUtils.configureDefaultMessageOnTextFields(List.of(this.commentTextField));
         this.boardPanel.setBorder(BorderFactory.createLineBorder(principalFrame.getThemeColor(), 4));
+        this.surrenderButton.setEnabled(false);
+        this.drawButton.setEnabled(false);
         
         gotRequest(createRequest);
         
@@ -159,12 +166,36 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     }
     
     private void cellAction(int row, int col) {
+        updateBoard();
+        boolean correctMove = false;
         if (lastPositionClicked == null) {
             lastPositionClicked = new Position(row, col);
         }else{
+//            correctMove = chessManager.move(lastPositionClicked,  new Position(row, col)) == ChessCode.OK;
+//            if (correctMove) {
+                sendMove(lastPositionClicked, new Position(row, col));
+                lastPositionClicked = new Position(row, col);
+//            }
+        }
+        if (!correctMove) {
             System.out.println(lastPositionClicked + " -> " + new Position(row, col));
-            sendMove(lastPositionClicked, new Position(row, col));
-            lastPositionClicked = new Position(row, col);
+            DisplayableCell actualCell = chessManager.getChessboard().getBoard()[col][row];
+            System.out.println("cell --> " + actualCell);
+            if (!actualCell.blankCell()) {
+                for (Position position : ((Piece)actualCell).whereCanIMove(chessManager.getChessboard().cloneBoard())) {
+                    int boardPos = ChessUtils.getPositionByRowColumn(position.getRow(), position.getColumn(), imWhite);
+                    JButton button = (JButton) this.boardPanel.getComponent(boardPos);
+                    this.boardPanel.remove(boardPos);
+                    this.boardPanel.add(GUIUtils.addDot(button, Color.RED, false),boardPos);
+                }
+                for (Position position : ((Piece)actualCell).whereCanIAttack(chessManager.getChessboard().cloneBoard())) {
+                    int boardPos = ChessUtils.getPositionByRowColumn(position.getRow(), position.getColumn(), imWhite);
+                    JButton button = (JButton) this.boardPanel.getComponent(boardPos);
+                    this.boardPanel.remove(boardPos);
+                    this.boardPanel.add(GUIUtils.addDot(button, Color.RED, true),boardPos);
+                }
+            }
+            this.boardPanel.validate();
         }
     }
     
@@ -200,6 +231,8 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         jLabel1 = new javax.swing.JLabel();
         firstPlayerLabel = new javax.swing.JLabel();
         commentTextField = new javax.swing.JTextField();
+        surrenderButton = new javax.swing.JButton();
+        drawButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(51, 51, 51));
 
@@ -308,13 +341,32 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
             }
         });
 
+        surrenderButton.setText("Rendirse");
+        surrenderButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                surrenderButtonActionPerformed(evt);
+            }
+        });
+
+        drawButton.setText("Pedir Tablas");
+        drawButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                drawButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(surrenderButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(drawButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -327,14 +379,19 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(rightPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(commentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(commentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(surrenderButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(drawButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -356,15 +413,61 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     }// </editor-fold>//GEN-END:initComponents
 
     private void commentTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commentTextFieldActionPerformed
-        this.chatPanel.addText(Client.getUsername(), this.commentTextField.getText(), Color.BLUE);
+        addGameMessage(true, this.commentTextField.getText());
+        sendGameMessage(this.commentTextField.getText());
         this.commentTextField.setText("");
-        this.chatPanel.validate();
     }//GEN-LAST:event_commentTextFieldActionPerformed
 
+    private void surrenderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_surrenderButtonActionPerformed
+        
+    }//GEN-LAST:event_surrenderButtonActionPerformed
+
+    private void drawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawButtonActionPerformed
+        
+    }//GEN-LAST:event_drawButtonActionPerformed
+
+    private void addGameMessage(boolean self, String text){
+        String sender;
+        Color selfColor;
+        Color otherColor;
+        if (imWhite) {
+            selfColor = Color.LIGHT_GRAY;
+            otherColor = principalFrame.getThemeColor();
+        }else{
+            selfColor = principalFrame.getThemeColor();
+            otherColor = Color.LIGHT_GRAY;
+        }
+        Color messageColor;
+        Color foregroundColor;
+        if (self) {
+            messageColor = selfColor;
+            foregroundColor = otherColor;
+            sender = Client.getUsername();
+        }else{
+            messageColor = otherColor;
+            foregroundColor = selfColor;
+            sender = this.otherUsername;
+        }
+        this.chatPanel.addText(sender, text, messageColor, foregroundColor);
+        this.chatPanel.validate();
+    }
+    
+    private void sendGameMessage(String text){
+        try {
+            Client.sendRequest(
+                    RequestBuilder.createRequest("sendgamemessage")
+                            .put("message", text)
+                            .build()
+            );
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel boardPanel;
     private javax.swing.JTextField commentTextField;
+    private javax.swing.JButton drawButton;
     private javax.swing.JLabel firstPlayerLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
@@ -372,6 +475,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     private javax.swing.JPanel leftPanel;
     private javax.swing.JPanel rightPanel;
     private javax.swing.JLabel secondPlayerLabel;
+    private javax.swing.JButton surrenderButton;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -397,6 +501,8 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         @Override
         public void execute(Request request) {
             otherUsername = request.getOrDefault("ownerusername", "J2 (no-name)");
+            surrenderButton.setEnabled(true);
+            drawButton.setEnabled(true);
             secondPlayerLabel.setText(otherUsername);
         }
         @Override
@@ -404,11 +510,36 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
             return "joined";
         }
     }
+    private class GameMessageAction implements Action{
+        @Override
+        public void execute(Request request) {
+            if (request.contains("message")) {
+                addGameMessage(false, request.get("message"));
+            }
+        }
+        @Override
+        public String getType() {
+            return "gamemessage";
+        }
+    }
     private class UpdateBoardAction implements Action{
         @Override
         public void execute(Request request) {
             try {
                 chessManager = ChessManager.fromJSON(request.get("board"));
+                
+                for (DisplayableCell[] displayableCells : chessManager.getChessboard().getBoard()) {
+                    for (DisplayableCell displayableCell : displayableCells) {
+                        if (displayableCell instanceof Piece) {
+                            System.out.println(displayableCell + ": " + ((Piece)displayableCell).isWhite());
+                            for (Movement movement : ((Piece)displayableCell).getMovements()) {
+                                System.out.println(movement);
+                            }
+                        }
+                    }
+                    System.out.println("");
+                }
+                
                 imWhite = request.get("white").equals("true");
                 Color themeColor = principalFrame.getThemeColor();
                 if (imWhite) {

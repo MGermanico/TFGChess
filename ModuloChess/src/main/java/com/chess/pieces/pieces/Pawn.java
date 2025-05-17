@@ -11,7 +11,9 @@ import com.chess.pieces.movements.VerticalMovement;
 import com.chess.pieces.DisplayableCell;
 import com.chess.pieces.Moved;
 import com.chess.pieces.Piece;
+import com.chess.pieces.movements.Movement;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import java.util.List;
 
 /**
  *
@@ -27,7 +29,7 @@ public class Pawn extends Piece implements Moved{
     private VerticalMovement verticalMove;
     
     @Override
-    public void setMovements() {
+    public void addMovements() {
         verticalMove = new VerticalMovement(white, 2);
         DiagonalMovement diagonalRightMove = new DiagonalMovement(white, true, 1);
         DiagonalMovement diagonalLeftMove = new DiagonalMovement(white, false, 1);
@@ -39,6 +41,10 @@ public class Pawn extends Piece implements Moved{
         super.getMovements().add(verticalMove);
         super.getMovements().add(diagonalRightMove);
         super.getMovements().add(diagonalLeftMove);
+    }
+    
+    public void setVerticalMovementMaxSteps(int maxSteps){
+        verticalMove.setMaxSteps(maxSteps);
     }
 
     @Override
@@ -64,7 +70,6 @@ public class Pawn extends Piece implements Moved{
 
     @Override
     public void setMoved(boolean moved) {
-        if(moved) verticalMove.setMaxSteps(1);
         this.hasMoved = moved;
     }
     

@@ -42,6 +42,8 @@ public class GUITest extends javax.swing.JFrame {
     /**
      * Creates new form GUITest
      */
+    
+    
     ChessManager chess;
     Chessboard board;
     public GUITest() {
@@ -164,7 +166,7 @@ public class GUITest extends javax.swing.JFrame {
             DisplayableCell  cell = board.getPiece(lastPos);
             if (!cell.blankCell() && ((Piece)cell).isWhite() == chess.isWhiteTurn()) {
                 movePos = ((Piece)cell).whereCanIMove(board.cloneBoard());
-                        attackPos = ((Piece)cell).whereCanIAttack(board.cloneBoard());
+                attackPos = ((Piece)cell).whereCanIAttack(board.cloneBoard());
             }
         }
         this.jPanel1.removeAll();
@@ -214,7 +216,8 @@ public class GUITest extends javax.swing.JFrame {
             setTablero();
         }else{
             System.out.println("mover: " + lastPos + " " + d.getPosition());
-            if (chess.move(lastPos, d.getPosition().clone()) == ChessCode.OK) {
+            int code = chess.move(lastPos, d.getPosition().clone());
+            if (code == ChessCode.OK) {
                 lastPos = null;
                 setTablero();
                 System.out.println(board.toString());

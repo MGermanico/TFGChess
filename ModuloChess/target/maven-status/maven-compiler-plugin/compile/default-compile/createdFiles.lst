@@ -14,6 +14,7 @@ com\chess\pieces\Blank.class
 com\chess\pieces\movements\DiagonalMovement.class
 com\chess\pieces\movements\RectilinealMovement.class
 com\chess\pieces\Piece.class
+com\chess\pieces\pieces\test.class
 com\chess\general\Chessboard.class
 com\chess\pieces\Moved.class
 com\chess\pieces\BlankTest1.class
@@ -21,5 +22,4 @@ com\chess\general\Position.class
 com\chess\pieces\movements\HorizontalMovement.class
 com\utils\ChessCode.class
 com\chess\general\BoardIterator.class
-com\utils\MathUtils.class
 com\chess\pieces\pieces\Knight.class

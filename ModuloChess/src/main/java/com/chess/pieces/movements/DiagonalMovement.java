@@ -8,7 +8,6 @@ import com.chess.general.Chessboard;
 import com.chess.general.Position;
 import com.chess.pieces.DisplayableCell;
 import com.utils.ChessCode;
-import com.utils.MathUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,12 +32,18 @@ public class DiagonalMovement extends RectilinealMovement{
     @Override
     protected int isCorrectMove(Position from, Position to) {
         if(
-                MathUtils.distance(from.getColumn(), to.getColumn()) !=
-                MathUtils.distance(from.getRow(), to.getRow())
+                distance(from.getColumn(), to.getColumn()) !=
+                distance(from.getRow(), to.getRow())
                 )return ChessCode.IS_NOT_DIAGONAL;
         
         return ChessCode.OK;
     }
+
+    @Override
+    public String toString() {
+        return "diagonal U,R,MAX = " + this.toUp + " , " + this.toRight + " , " + this.maxSteps;
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="JSonMapperDependencies">
     public DiagonalMovement() {
     }

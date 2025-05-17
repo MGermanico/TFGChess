@@ -211,11 +211,11 @@ public class Menu extends javax.swing.JPanel implements Requestable{
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        principalFrame.setUp(PrincipalFrame.SETUP_CREATE_GAME);
+        principalFrame.setUp(PrincipalFrame.SETUP.SETUP_CREATE_GAME);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        principalFrame.setUp(PrincipalFrame.SETUP_JOIN_GAME);
+        principalFrame.setUp(PrincipalFrame.SETUP.SETUP_JOIN_GAME);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

@@ -56,9 +56,9 @@ public class Game {
     }
     
     public boolean move(ClientConn client, Position from, Position to){
-        System.out.println("\n\n\n\n");
+        System.out.println("\n\n\n");
         System.out.println("turno de blancas? " + chess.isWhiteTurn());
-        System.out.println("\n\n\n\n");
+        System.out.println("\n\n\n");
         
         if(client != ownerPlayer && client != secondPlayer) return false;
         
@@ -67,16 +67,24 @@ public class Game {
         if(ownerTurn && client == secondPlayer) return false;
         if(!ownerTurn && client == ownerPlayer) return false;
         
-        if (chess.move(from, to) != ChessCode.OK) return false;
+        int code = chess.move(from, to);
+        System.out.println("Game: code: " + code);
+        if (code != ChessCode.OK){
+            if (code > 0) {
+                return false;
+            }
+            chess.setState(code);
+        }
         
         String jsonChess;
         try {
             jsonChess = chess.toJSON();
         } catch (JsonProcessingException ex) {
+            ex.printStackTrace();
             return false;
         }
         
-        return updateBoard();
+        return updateBoard(jsonChess);
     }
 
     public boolean setSecondPlayer(ClientConn secondPlayer) {
@@ -106,15 +114,8 @@ public class Game {
     public String getName() {
         return name;
     }
-
-    private boolean updateBoard() {
-        String jsonChess;
-        try {
-            jsonChess = chess.toJSON();
-        } catch (JsonProcessingException ex) {
-            return false;
-        }
-        
+    
+    private boolean updateBoard(String jsonChess) {
         RequestBuilder boardRequest = RequestBuilder
                 .createRequest("updatedBoard")
                 .put("board", jsonChess);
@@ -131,7 +132,33 @@ public class Game {
         
         return true;
     }
-    
-    
+
+    private boolean updateBoard() {
+        String jsonChess;
+        try {
+            jsonChess = chess.toJSON();
+        } catch (JsonProcessingException ex) {
+            return false;
+        }
+        
+        return updateBoard(jsonChess);
+    }
+
+    public boolean sendMessage(ClientConn sender, String text) {
+        if(text == null)
+            return false;
+        ClientConn receiver;
+        if (sender.equals(ownerPlayer)) {
+            receiver = secondPlayer;
+        }else{
+            receiver = ownerPlayer;
+        }
+        receiver.sendRequest(
+                RequestBuilder.createRequest("gamemessage")
+                .put("message", text)
+                .build()
+        );
+        return true;
+    }
     
 }

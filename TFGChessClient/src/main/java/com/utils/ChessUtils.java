@@ -48,4 +48,10 @@ public class ChessUtils {
         }
         return pieceIcon;
     }
+    public static int getPositionByRowColumn(int row, int col, boolean imWhite){
+        if (imWhite) 
+            return ((7 - row + 1) *10 + 7 - col + 1) ;
+        return (row + 1) *10 + col + 1  ;
+        
+    }
 }

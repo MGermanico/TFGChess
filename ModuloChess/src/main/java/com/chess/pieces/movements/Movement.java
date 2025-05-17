@@ -70,7 +70,9 @@ public abstract class Movement {
     public void setInstantMove(boolean instantMove) {
         this.instantMove = instantMove;
     }
-    
+    protected int distance(int n1, int n2){
+        return Math.abs(n1 - n2);
+    }
     // <editor-fold defaultstate="collapsed" desc="JSonMapperDependencies">
     
     public Movement() {

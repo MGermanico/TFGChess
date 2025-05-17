@@ -24,7 +24,7 @@ public class Rook extends Piece  implements Moved{
     }
 
     @Override
-    public void setMovements() {
+    public void addMovements() {
         VerticalMovement upMove = new VerticalMovement(true, null);
         VerticalMovement downMove = new VerticalMovement(false, null);
         HorizontalMovement rightMove = new HorizontalMovement(true, null);

@@ -24,12 +24,14 @@ import javax.swing.UIManager;
  * @author migue
  */
 public class PrincipalFrame extends JFrame implements Requestable{
-
-    public static final int SETUP_LOGIN = 1;
-    public static final int SETUP_REGISTER = 2;
-    public static final int SETUP_MENU = 3;
-    public static final int SETUP_CREATE_GAME = 4;
-    public static final int SETUP_JOIN_GAME = 5;
+    
+    public static enum SETUP {
+        SETUP_LOGIN,
+        SETUP_REGISTER,
+        SETUP_MENU,
+        SETUP_CREATE_GAME,
+        SETUP_JOIN_GAME
+    };
     
     private JPanel back;
     private Color themeColor;
@@ -44,27 +46,27 @@ public class PrincipalFrame extends JFrame implements Requestable{
         this.setBackground(new Color(51, 51, 51));
         back.setBackground(new Color(51, 51, 51));
 //        this.setResizable(false);
-        setUp(SETUP_LOGIN);
+        setUp(SETUP.SETUP_LOGIN);
     }
     
-    public void setUp(int type) {
+    public void setUp(SETUP type) {
         Dimension frameSize = new Dimension(1000, 700);
         back.removeAll();
-        if (type == SETUP_LOGIN) {
+        if (type == SETUP.SETUP_LOGIN) {
             frameSize = new Dimension(550, 338);
             Login login = new Login(this);
             back.add(login);
-        }else if (type == SETUP_REGISTER) {
+        }else if (type == SETUP.SETUP_REGISTER) {
             frameSize = new Dimension(550, 338);
             Register register = new Register(this);
             back.add(register);
-        } else if (type == SETUP_MENU) {
+        } else if (type == SETUP.SETUP_MENU) {
             Menu menu = new Menu(this);
             back.add(menu);
-        }else if (type == SETUP_CREATE_GAME) {
+        }else if (type == SETUP.SETUP_CREATE_GAME) {
             CreateGame createGame = new CreateGame(this);
             back.add(createGame);
-        }else if (type == SETUP_JOIN_GAME) {
+        }else if (type == SETUP.SETUP_JOIN_GAME) {
             JoinGame joinGame = new JoinGame(this);
             back.add(joinGame);
         }

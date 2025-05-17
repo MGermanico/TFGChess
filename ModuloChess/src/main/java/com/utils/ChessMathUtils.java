@@ -8,8 +8,3 @@ package com.utils;
  *
  * @author migue
  */
-public class MathUtils {
-    public static final int distance(int n1, int n2){
-        return Math.abs(n1 - n2);
-    }
-}

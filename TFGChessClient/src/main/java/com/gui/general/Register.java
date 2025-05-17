@@ -211,7 +211,7 @@ public class Register extends javax.swing.JPanel implements Requestable{
     }//GEN-LAST:event_registerButtonActionPerformed
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        principalFrame.setUp(PrincipalFrame.SETUP_LOGIN);
+        principalFrame.setUp(PrincipalFrame.SETUP.SETUP_LOGIN);
     }//GEN-LAST:event_loginButtonActionPerformed
 
     private void showPassButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPassButtonActionPerformed
@@ -243,7 +243,7 @@ public class Register extends javax.swing.JPanel implements Requestable{
     @Override
     public void gotRequest(Request request) {
         if (request.getHeader().equals("loged")) {
-            principalFrame.setUp(PrincipalFrame.SETUP_MENU);
+            principalFrame.setUp(PrincipalFrame.SETUP.SETUP_MENU);
         }else if (request.getHeader().equals("exit")) {
             String codeStr = request.get("code");
             if (codeStr != null && codeStr.matches("\\d+")) {

@@ -24,7 +24,7 @@ public class Queen extends Piece{
     }
 
     @Override
-    public void setMovements() {
+    public void addMovements() {
         DiagonalMovement upRightDiagonalMovement = new DiagonalMovement(true, true, null);
         DiagonalMovement upLeftDiagonalMovement = new DiagonalMovement(true, false, null);
         DiagonalMovement downRightDiagonalMovement = new DiagonalMovement(false, true, null);

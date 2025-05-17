@@ -29,7 +29,7 @@ public class ChatPanel extends javax.swing.JPanel {
         this.setSize(270, 1600);
     }
     
-    public void addText(String title, String text, Color color) {
+    public void addText(String title, String text, Color color, Color foreground) {
         JPanel textPanel = new JPanel();      
         int[] nLines = new int[]{1};
         
@@ -43,6 +43,7 @@ public class ChatPanel extends javax.swing.JPanel {
         JLabel textLabel = new JLabel();
         FontMetrics metrics = getFontMetrics(textLabel.getFont());
         textLabel.setText("<html>" + titleText + StringUtils.maximumLongSize(text, nLines, 170, metrics) + "</html>");
+        textLabel.setForeground(foreground);
         textLabel.setHorizontalAlignment(SwingConstants.LEFT);
         textPanel.setBackground(color);
         Dimension labelDimension = new Dimension(230, 17*nLines[0] + extraSize - 20);
@@ -57,12 +58,12 @@ public class ChatPanel extends javax.swing.JPanel {
         textPanel.setMaximumSize(panelDimension);
         textPanel.setMinimumSize(panelDimension);
         textPanel.add(textLabel);
-        textPanel.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+        textPanel.setBorder(BorderFactory.createLineBorder(foreground, 2));
         this.add(textPanel, 0);
         
         Dimension spaceDimension = new Dimension(250, 10);
         JPanel space = new JPanel();
-        space.setBackground(Color.PINK);
+        space.setBackground(this.getBackground());
         space.setSize(spaceDimension);
         space.setPreferredSize(spaceDimension);
         space.setMaximumSize(spaceDimension);
@@ -74,7 +75,7 @@ public class ChatPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setBackground(new java.awt.Color(255, 0, 0));
+        setBackground(new java.awt.Color(16, 16, 16));
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
     }// </editor-fold>//GEN-END:initComponents
 

@@ -47,6 +47,7 @@ public class ClientConn implements Closeable{
         add(new GetFriendsAction());
         add(new GetFriendRequestsAction());
         add(new RemoveFriendRequestAction());
+        add(new SendGameMessage());
     }};
     
     public ClientConn(String username, Socket socket) {
@@ -260,6 +261,20 @@ public class ClientConn implements Closeable{
             return "removefriendrequest";
         }
     }
+    private class SendGameMessage extends FailableAction{
+
+        @Override
+        protected boolean comprobation(Request request) {
+            if(game == null)
+                return false;
+            return game.sendMessage(ClientConn.this, request.getOrDefault("message", null));
+        }
+        @Override
+        public String getType() {
+            return "sendgamemessage";
+        }
+        
+    }
     private class GetFriendsAction implements Action{
 
         @Override
@@ -292,4 +307,5 @@ public class ClientConn implements Closeable{
         }
         
     }
+    
 }

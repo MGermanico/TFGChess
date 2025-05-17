@@ -25,7 +25,7 @@ public class King extends Piece implements Moved{
     }
 
     @Override
-    public void setMovements() {
+    public void addMovements() {
         DiagonalMovement upRightDiagonalMovement = new DiagonalMovement(true, true, 1);
         DiagonalMovement upLeftDiagonalMovement = new DiagonalMovement(true, false, 1);
         DiagonalMovement downRightDiagonalMovement = new DiagonalMovement(false, true, 1);
