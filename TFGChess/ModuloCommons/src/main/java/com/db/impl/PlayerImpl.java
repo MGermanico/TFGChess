@@ -63,7 +63,7 @@ public class PlayerImpl implements PlayerService {
             Player player = session.createQuery("FROM Player WHERE username = :username", Player.class)
                     .setParameter("username", username)
                     .uniqueResult();
-            return player != null;
+            return player != null && player.getUsername().equals(username);
         }
     }
 }

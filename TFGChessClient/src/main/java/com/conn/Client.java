@@ -5,7 +5,7 @@
 package com.conn;
 
 import com.connutils.Request;
-import com.gui.general.PrincipalFrame;
+import com.gui.general.principalframe.PrincipalFrame;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.formdev.flatlaf.FlatDarkLaf;
 import java.io.BufferedReader;
@@ -92,6 +92,7 @@ public class Client {
     }
     
     public static void sendRequest(Request request) throws JsonProcessingException{
+        System.out.println("enviando: " + request);
         out.println(request.toJSON());
 
         out.flush();

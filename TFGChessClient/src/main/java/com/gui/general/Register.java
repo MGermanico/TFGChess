@@ -4,6 +4,7 @@
  */
 package com.gui.general;
 
+import com.gui.general.principalframe.PrincipalFrame;
 import com.conn.Client;
 import com.connutils.Request;
 import com.utils.ServerCode;

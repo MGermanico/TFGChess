@@ -82,11 +82,11 @@
                           <Component id="commentTextField" min="-2" pref="32" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="leftPanel" max="32767" attributes="0"/>
+                          <Component id="leftPanel" pref="253" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="surrenderButton" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
-                              <Component id="drawButton" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="drawButton" min="-2" pref="32" max="-2" attributes="0"/>
+                              <Component id="surrenderButton" min="-2" pref="32" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -283,7 +283,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="surrenderButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Rendirse"/>
+            <Property name="text" type="java.lang.String" value="Salir"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="surrenderButtonActionPerformed"/>
@@ -292,6 +292,7 @@
         <Component class="javax.swing.JButton" name="drawButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Pedir Tablas"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="drawButtonActionPerformed"/>

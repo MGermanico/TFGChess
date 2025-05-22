@@ -18,7 +18,7 @@ import java.util.Objects;
 @Entity
 public class Player {
     @Id
-    @Column(length = 20)
+    @Column(columnDefinition = "VARCHAR(20) COLLATE utf8_bin")
     private String username;
     
     @Column(nullable = false)

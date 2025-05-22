@@ -4,6 +4,7 @@
  */
 package com.gui.lobby;
 
+import com.gui.general.ChatPanel;
 import com.chess.general.ChessManager;
 import com.chess.general.Chessboard;
 import com.chess.general.Position;
@@ -17,7 +18,7 @@ import com.conn.Client;
 import com.connutils.Action;
 import com.connutils.RequestBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gui.general.PrincipalFrame;
+import com.gui.general.principalframe.PrincipalFrame;
 import com.utils.ChessCode;
 import com.utils.ChessUtils;
 import com.utils.GUIUtils;
@@ -39,8 +40,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 
 /**
  *
@@ -56,7 +59,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     private String otherUsername;
     private ChessManager chessManager = null;
     private boolean imWhite = false;
-    private int cellSize = 80;
+    private int cellSize = 30;
     private ChatPanel logPanel;
     private ChatPanel chatPanel;
     private Position lastPositionClicked = null;
@@ -66,6 +69,8 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         add(new JoinedAction());
         add(new UpdateBoardAction());
         add(new GameMessageAction());
+        add(new DrawAnswerAction());
+        add(new LeaveAction());
     }};
     
     public Lobby(PrincipalFrame principalFrame, Request createRequest) {
@@ -77,8 +82,6 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         initComponents();
         GUIUtils.configureDefaultMessageOnTextFields(List.of(this.commentTextField));
         this.boardPanel.setBorder(BorderFactory.createLineBorder(principalFrame.getThemeColor(), 4));
-        this.surrenderButton.setEnabled(false);
-        this.drawButton.setEnabled(false);
         
         gotRequest(createRequest);
         
@@ -341,7 +344,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
             }
         });
 
-        surrenderButton.setText("Rendirse");
+        surrenderButton.setText("Salir");
         surrenderButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 surrenderButtonActionPerformed(evt);
@@ -349,6 +352,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         });
 
         drawButton.setText("Pedir Tablas");
+        drawButton.setEnabled(false);
         drawButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 drawButtonActionPerformed(evt);
@@ -386,11 +390,11 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(commentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(surrenderButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(drawButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(drawButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(surrenderButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 
@@ -419,13 +423,35 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     }//GEN-LAST:event_commentTextFieldActionPerformed
 
     private void surrenderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_surrenderButtonActionPerformed
-        
+        leave(false);
+        if (this.surrenderButton.getText().equals("Salir")) {
+            exit();
+        }else{
+            if (!this.otherUsername.equals("J2 (no-name)")) {
+                loose();
+            }else{
+                JOptionPane.showMessageDialog(Lobby.this, "Has abandonado la sala");
+                exit();
+            }
+        }
     }//GEN-LAST:event_surrenderButtonActionPerformed
 
     private void drawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drawButtonActionPerformed
-        
+        leave(true);
     }//GEN-LAST:event_drawButtonActionPerformed
 
+    private void leave(boolean draw){
+        try {
+            Client.sendRequest(
+                    RequestBuilder.createRequest("leave")
+                    .put("drawrequest", Boolean.toString(draw))
+                    .build()
+            );
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     private void addGameMessage(boolean self, String text){
         String sender;
         Color selfColor;
@@ -463,6 +489,25 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
             Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void win(){
+        String message = " ¡¡ HAS GANADO !! ";
+        JOptionPane.showMessageDialog(Lobby.this, GUIUtils.biggerTextHTML(message));
+        exit();
+    }
+    private void loose(){
+        String message = "  ¡ perdiste :( ! ";
+        JOptionPane.showMessageDialog(Lobby.this, GUIUtils.biggerTextHTML(message));
+        exit();
+    }
+    private void draw(){
+        String message = "¡¡ " + Lobby.this.otherUsername + " HA ACEPTADO LAS TABLAS !!";
+        JOptionPane.showMessageDialog(Lobby.this, GUIUtils.biggerTextHTML(message));
+        exit();
+    }
+    private void exit(){
+        principalFrame.setUp(PrincipalFrame.SETUP.SETUP_MENU);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel boardPanel;
@@ -490,6 +535,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         @Override
         public void execute(Request request) {
             otherUsername = request.getOrDefault("username", "J2 (no-name)");
+            surrenderButton.setText("Rendirse");
             secondPlayerLabel.setText(otherUsername);
         }
         @Override
@@ -501,7 +547,6 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         @Override
         public void execute(Request request) {
             otherUsername = request.getOrDefault("ownerusername", "J2 (no-name)");
-            surrenderButton.setEnabled(true);
             drawButton.setEnabled(true);
             secondPlayerLabel.setText(otherUsername);
         }
@@ -527,18 +572,6 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         public void execute(Request request) {
             try {
                 chessManager = ChessManager.fromJSON(request.get("board"));
-                
-                for (DisplayableCell[] displayableCells : chessManager.getChessboard().getBoard()) {
-                    for (DisplayableCell displayableCell : displayableCells) {
-                        if (displayableCell instanceof Piece) {
-                            System.out.println(displayableCell + ": " + ((Piece)displayableCell).isWhite());
-                            for (Movement movement : ((Piece)displayableCell).getMovements()) {
-                                System.out.println(movement);
-                            }
-                        }
-                    }
-                    System.out.println("");
-                }
                 
                 imWhite = request.get("white").equals("true");
                 Color themeColor = principalFrame.getThemeColor();
@@ -568,6 +601,35 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         @Override
         public String getType() {
             return "updatedBoard";
+        }
+    }
+    private class DrawAnswerAction implements Action{
+        @Override
+        public void execute(Request request) {
+            if (request.getOrDefault("accepteddraw", "false").equals("true")) {
+                draw();
+            }else{
+                String message = Lobby.this.otherUsername + " ha denegado las tablas";
+                JOptionPane.showMessageDialog(Lobby.this, GUIUtils.biggerTextHTML(message));
+            }
+        }
+        @Override
+        public String getType() {
+            return "drawanswer";
+        }
+    }
+    private class LeaveAction implements Action{
+        @Override
+        public void execute(Request request) {
+            if (request.getOrDefault("won", "false").equals("true")) {
+                win();
+            }else{
+                loose();
+            }
+        }
+        @Override
+        public String getType() {
+            return "leave";
         }
     }
 }

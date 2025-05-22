@@ -16,10 +16,10 @@ import java.util.Objects;
 @Embeddable
 public class PlayerFriendKey implements Serializable {
     
-    @Column(length = 20)
+    @Column(columnDefinition = "VARCHAR(20) COLLATE utf8_bin")
     private String username;
     
-    @Column(length = 20)
+    @Column(columnDefinition = "VARCHAR(20) COLLATE utf8_bin")
     private String friendUsername;
 
     public PlayerFriendKey() {}

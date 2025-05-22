@@ -5,6 +5,7 @@
 package com.server;
 
 import com.chess.general.ChessManager;
+import com.connutils.chatlog.ChatLog;
 import com.db.DatabaseManager;
 import com.db.pojo.Player;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,11 +37,12 @@ public class Server {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
     private static int PORT;
     
-    private static Map<String, ClientConn> players = new HashMap<>();
+    public static Map<String, ClientConn> players = new HashMap<>();
     private static Map<String, Game> games = new HashMap<>();
+    
+    public static Map<String, ChatLog> logs = new HashMap<String, ChatLog>();
     
     public static void main(String[] args) {
 //        DatabaseManager.addFriendRequestByUsernames("Pepe", "jose");
@@ -69,6 +71,7 @@ public class Server {
         synchronized (players) {
             if (!players.containsKey(username) || !players.get(username).isConnected()) {
                 ClientConn client = new ClientConn(username, socket);
+                logs.put(username, new ChatLog());
                 players.put(username, client);
                 client.sendRequest(RequestBuilder.createRequest("loged").build());
                 updateFriendsLists(username);
@@ -86,18 +89,23 @@ public class Server {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
         synchronized (players) {
+            logs.remove(con.getUsername());
             players.remove(con.getUsername());
             System.out.println("cerrada " + players.size());
         }
         updateFriendsLists(con.getUsername());
     }
 
-    static boolean createGame(String username, Request request) {
+    static boolean createGame(String username, Request request, ClientConn.CreateAction observer) {
         System.out.println("CREAR PARTIDA");
         ClientConn client;
         boolean ownerIsWhite;
         try {
             String name = request.get("name");
+            if(games.containsKey(name)){
+                observer.setErrorMessage("nombre de sala ya existente");
+                return false;
+            }
             ownerIsWhite = request.getOrDefault("ownerIsWhite", "true").equals("true");
             String password = request.get("password");
             client = players.get(username);
@@ -112,6 +120,10 @@ public class Server {
             ex.printStackTrace();
            return false;
         }
+    }
+    
+    static void removeGame(Game game) {
+        games.remove(game.getName());
     }
 
     static boolean joinGame(String username, Request request) {

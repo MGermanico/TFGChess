@@ -5,7 +5,7 @@
 package com.gui.lobby;
 
 import com.connutils.Request;
-import com.gui.general.PrincipalFrame;
+import com.gui.general.principalframe.PrincipalFrame;
 
 /**
  *

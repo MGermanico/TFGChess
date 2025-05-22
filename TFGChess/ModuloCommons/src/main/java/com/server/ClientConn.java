@@ -8,9 +8,11 @@ import com.chess.general.Position;
 import com.connutils.Action;
 import com.connutils.Request;
 import com.connutils.RequestBuilder;
+import com.connutils.chatlog.Message;
 import com.db.DatabaseManager;
 import com.db.pojo.Player;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.utils.ServerCode;
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -18,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +49,9 @@ public class ClientConn implements Closeable{
         add(new GetFriendRequestsAction());
         add(new RemoveFriendRequestAction());
         add(new SendGameMessage());
+        add(new LeaveAction());
+        add(new SendMessage());
+        add(new GetMessages());
     }};
     
     public ClientConn(String username, Socket socket) {
@@ -160,8 +164,34 @@ public class ClientConn implements Closeable{
         }
         sendRequest(builder.build());
     }
+
+    private void sendUpdateFriendRequestAlert() {
+        boolean anyFriendRequest
+            = DatabaseManager.getFriendRequestsReceivedByUsername(this.getUsername()).isEmpty();
+        this.sendRequest(
+                RequestBuilder.createRequest("updatefriendrequestalert")
+                        .put("active", Boolean.toString(!anyFriendRequest))
+                        .build()
+        );
+    }
+    
+    public void sendAllMessages(String withUsername){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            sendRequest(
+                    RequestBuilder.createRequest("chatlog")
+                            .put("with", withUsername)
+                            .put("chatlog", objectMapper.writeValueAsString(Server.logs.get(this.getUsername()).getMessagesWith(withUsername)))
+                            .build()
+            );
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(ClientConn.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     private abstract class FailableAction implements Action{
+        protected String errorMessage = null;
+        
         @Override
         public void execute(Request request) {
             if (comprobation(request)) {
@@ -173,7 +203,6 @@ public class ClientConn implements Closeable{
         protected abstract boolean comprobation(Request request);
         
         protected void success(){
-            System.out.println("SUCCES");
             sendRequest(
                     RequestBuilder.createRequest("ok")
                     .put("on", getType())
@@ -181,18 +210,23 @@ public class ClientConn implements Closeable{
             );
         }
         protected void failed(){
-            System.out.println("FAILED");
-            sendRequest(
+            RequestBuilder requestBuilder = 
                     RequestBuilder.createRequest("failed")
-                    .put("on", getType())
-                    .build());
+                    .put("on", getType());
+            if (errorMessage != null) {
+                requestBuilder.put("message", errorMessage);
+            }
+            sendRequest(requestBuilder.build());
         }
     }
     
-    private class CreateAction extends FailableAction{
+    class CreateAction extends FailableAction{
+        public void setErrorMessage(String errorMessage){
+            this.errorMessage = errorMessage;
+        }
         @Override
         protected boolean comprobation(Request request) {
-            return Server.createGame(username, request);
+            return Server.createGame(username, request, this);
         }
         @Override
         public String getType() {
@@ -231,7 +265,7 @@ public class ClientConn implements Closeable{
             return "move";
         }
     }
-    private class RemoveFriendRequestAction extends FailableAction{
+    private class AddFriendAction extends FailableAction{
         @Override
         protected boolean comprobation(Request request) {
             boolean ok = request.contains("username") 
@@ -240,7 +274,9 @@ public class ClientConn implements Closeable{
                 Optional<ClientConn> friendOpt = Server.getPlayer(request.get("username"));
                 if (!friendOpt.isEmpty()) {
                     friendOpt.get().sendFriends();
+                    friendOpt.get().sendUpdateFriendRequestAlert();
                 }
+                sendUpdateFriendRequestAlert();
                 sendFriends();
             }
             return ok;
@@ -250,7 +286,7 @@ public class ClientConn implements Closeable{
             return "addfriend";
         }
     }
-    private class AddFriendAction extends FailableAction{
+    private class RemoveFriendRequestAction extends FailableAction{
         @Override
         protected boolean comprobation(Request request) {
             return request.contains("username") 
@@ -275,11 +311,56 @@ public class ClientConn implements Closeable{
         }
         
     }
+    private class SendMessage extends FailableAction{
+
+        @Override
+        protected boolean comprobation(Request request) {
+            if (!Server.logs.containsKey(ClientConn.this.username)) 
+                return false;
+            if (!Server.logs.containsKey(request.get("receiver"))) 
+                return false;
+            if (!Server.players.containsKey(request.get("receiver"))) 
+                return false;
+            if (!request.contains("receiver")) 
+                return false;
+            if (!request.contains("message")) 
+                return false;
+            Server.logs.get(ClientConn.this.username).sendedMessage(request.get("receiver"), request.get("message"));
+            Server.logs.get(request.get("receiver")).receivedMessage(ClientConn.this.username, request.get("message"));
+            ClientConn.this.sendAllMessages(request.get("receiver"));
+            Server.players.get(request.get("receiver")).sendAllMessages(username);
+            //enviar mensajes y alerta...
+            //y recibir en titlelabel
+            return true;
+        }
+        @Override
+        public String getType() {
+            return "sendmessage";
+        }
+        
+    }
+    private class GetMessages extends FailableAction{
+        
+        @Override
+        protected boolean comprobation(Request request) {
+            if(!request.contains("with"))
+                return false;
+            sendAllMessages(request.get("with"));
+            return true;
+        }
+        
+        @Override
+        public String getType() {
+            return "getmessages";
+        }
+        
+    }
     private class GetFriendsAction implements Action{
 
         @Override
         public void execute(Request request) {
             sendFriends();
+            sendUpdateFriendRequestAlert();
         }
 
         @Override
@@ -304,6 +385,33 @@ public class ClientConn implements Closeable{
         @Override
         public String getType() {
             return "getfriendrequests";
+        }
+        
+    }
+    private class LeaveAction implements Action{
+
+        @Override
+        public void execute(Request request) {
+            if (game != null) {
+                if (request.getOrDefault("drawrequest", "false").equals("true")) {
+                    if (game.drawRequest(ClientConn.this)) {
+                        System.out.println("TABLAS");
+                        game.endGame(null);
+                        Server.removeGame(game);
+                        game = null;
+                    }
+                }else{
+                    System.out.println("PIERDE: " + ClientConn.this.getUsername());
+                    game.endGame(ClientConn.this);
+                    Server.removeGame(game);
+                    game = null;
+                }
+            }
+        }
+
+        @Override
+        public String getType() {
+            return "leave";
         }
         
     }

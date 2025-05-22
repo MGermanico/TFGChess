@@ -7,8 +7,11 @@ package com.gui.lobby;
 import com.connutils.Request;
 import com.gui.general.Requestable;
 import com.conn.Client;
+import com.connutils.Action;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gui.general.PrincipalFrame;
+import com.gui.general.principalframe.PrincipalFrame;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -24,6 +27,11 @@ public class CreateGame extends javax.swing.JPanel implements Requestable{
      */
     
     PrincipalFrame principalFrame;
+    
+    private List<Action> actions = new ArrayList<Action>(){{
+        add(new JoinedAction());
+        add(new FailedAction());
+    }};
     
     public CreateGame(PrincipalFrame principalFrame) {
         initComponents();
@@ -156,14 +164,37 @@ public class CreateGame extends javax.swing.JPanel implements Requestable{
 
     @Override
     public void gotRequest(Request request) {
-        if (request.getHeader().equals("joined")) {
+        for (Action action : actions) {
+            if(action.getType().equals(request.getHeader()))
+                action.execute(request);
+        }
+    }
+
+    private class FailedAction implements Action{
+        @Override
+        public void execute(Request request) {
+            if (request.getOrDefault("on", "none").equals("create")) {
+                String errorMessage = request.getOrDefault("message", "Error desconocido");
+                JOptionPane.showMessageDialog(CreateGame.this, errorMessage);
+            }
+        }
+        @Override
+        public String getType() {
+            return "failed";
+        }
+    }
+    private class JoinedAction implements Action{
+        @Override
+        public void execute(Request request) {
             principalFrame.setUpGame(
                     LobbyBuilder
                             .createLobby(principalFrame, request)
                             .build()
             );
         }
+        @Override
+        public String getType() {
+            return "joined";
+        }
     }
-
-    
 }

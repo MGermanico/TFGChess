@@ -8,7 +8,7 @@ import com.connutils.Request;
 import com.gui.general.Requestable;
 import com.conn.Client;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gui.general.PrincipalFrame;
+import com.gui.general.principalframe.PrincipalFrame;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;

@@ -5,14 +5,10 @@
 package com.server;
 
 import com.chess.general.ChessManager;
-import com.chess.general.Chessboard;
 import com.chess.general.Position;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.utils.ChessCode;
-import com.utils.ServerCode;
 import java.io.File;
-import com.connutils.Action;
-import com.connutils.Request;
 import com.connutils.RequestBuilder;
 
 /**
@@ -28,6 +24,9 @@ public class Game {
     private ClientConn ownerPlayer;
     private ClientConn secondPlayer = null;
     private ChessManager chess;
+    
+    private boolean ownerDrawRequest = false;
+    private boolean secondDrawRequest = false;
     
     public Game(String name, String password, ClientConn ownerPlayer, boolean ownerIsWhite, ChessManager chess) throws Exception {
         this.name = name;
@@ -159,6 +158,65 @@ public class Game {
                 .build()
         );
         return true;
+    }
+    
+    public boolean drawRequest(ClientConn requester){
+        if (requester.equals(this.ownerPlayer)) {
+            this.ownerDrawRequest = true;
+        }else{
+            this.secondDrawRequest = true;
+        }
+        return this.ownerDrawRequest && secondDrawRequest;
+    }
+
+    void endGame(ClientConn looser) {
+        ClientConn winner;
+        if (looser == null) {
+            //TABLAS
+            System.out.println("TABLAS");
+            sendExitMessage(this.ownerPlayer, EXIT_TYPES.DRAW);
+            sendExitMessage(this.secondPlayer, EXIT_TYPES.DRAW);
+        }else {
+            if (looser.equals(ownerPlayer) || looser.equals(secondPlayer)) {
+                if (looser.equals(ownerPlayer)) {
+                    winner = secondPlayer;
+                }else {
+                    winner = ownerPlayer;
+                }
+                
+                sendExitMessage(winner, EXIT_TYPES.WINNER);
+                System.out.println("GANA " + winner);
+                
+                sendExitMessage(looser, EXIT_TYPES.LOOSER);
+                System.out.println("PIERDE " + looser);
+            }
+        }
+    }
+    
+    private enum EXIT_TYPES {WINNER, LOOSER, DRAW};
+    
+    private void sendExitMessage(ClientConn receiver, EXIT_TYPES type){
+        if(receiver != null){
+            if (type == EXIT_TYPES.DRAW) {
+                receiver.sendRequest(
+                        RequestBuilder.createRequest("drawanswer")
+                        .put("accepteddraw", "true")
+                        .build()
+                );
+            }else if (type == EXIT_TYPES.WINNER) {
+                receiver.sendRequest(
+                        RequestBuilder.createRequest("leave")
+                        .put("won", "true")
+                        .build()
+                );
+            }else if (type == EXIT_TYPES.LOOSER) {
+                receiver.sendRequest(
+                        RequestBuilder.createRequest("leave")
+                        .put("won", "false")
+                        .build()
+                );
+            }
+        }
     }
     
 }

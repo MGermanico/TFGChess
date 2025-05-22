@@ -102,14 +102,18 @@ public class GUIUtils {
     }
     
     private static BufferedImage iconToBufferedImage(Icon icon) {
-    int w = icon.getIconWidth();
-    int h = icon.getIconHeight();
+        int w = icon.getIconWidth();
+        int h = icon.getIconHeight();
 
-    BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g2d = image.createGraphics();
-    icon.paintIcon(null, g2d, 0, 0);
-    g2d.dispose();
+        BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        icon.paintIcon(null, g2d, 0, 0);
+        g2d.dispose();
 
-    return image;
-}
+        return image;
+    }
+    
+    public static String biggerTextHTML(String text){
+        return "<html><p style=\"font-weight: bold; font-size: 30px;\">" + text + "</p></html>";
+    }
 }
