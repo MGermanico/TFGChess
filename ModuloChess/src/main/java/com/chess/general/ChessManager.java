@@ -4,19 +4,15 @@
  */
 package com.chess.general;
 
+import com.chess.pieces.DisplayableCell;
 import com.chess.pieces.Piece;
-import com.chess.pieces.pieces.Bishop;
-import com.chess.pieces.pieces.Knight;
-import com.chess.pieces.pieces.Queen;
-import com.chess.pieces.pieces.Rook;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.utils.ChessCode;
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -24,6 +20,7 @@ import java.util.logging.Logger;
  */
 public class ChessManager {
     private Chessboard chessboard;
+    private List<Movement> movements;
     private boolean whiteTurn = true;
     private int state = STATE_PLAYING;
     
@@ -36,6 +33,7 @@ public class ChessManager {
     }
     
     public void setChessboard(Chessboard chessboard) {
+        movements = new LinkedList<Movement>();
         this.chessboard = chessboard;
     }
     
@@ -61,6 +59,9 @@ public class ChessManager {
         
          //entrada 2 NO ES del mismo color que el jugador que la mueve.
         if(!chessboard.getPiece(to).blankCell() && ((Piece)chessboard.getPiece(to)).isWhite() == whiteTurn) return ChessCode.EATING_MATES;
+        
+        Piece fromPiece = (Piece)chessboard.getPiece(from).clone();
+        DisplayableCell toCell = chessboard.getPiece(to).clone();
         
         int checkCode = chessboard.checkIfMove(from, to);
         
@@ -89,6 +90,7 @@ public class ChessManager {
             }else{
                 System.out.println("va a returnear cosigo " + checkCode);
             }
+            this.movements.add(new Movement(from.clone(), to.clone(), whiteTurn, !toCell.blankCell(), fromPiece));
             whiteTurn = !whiteTurn;
             return checkCode;
         }else{
@@ -98,6 +100,7 @@ public class ChessManager {
                 return ChessCode.STALEMATE;
             }
         }
+        this.movements.add(new Movement(from.clone(), to.clone(), whiteTurn, !toCell.blankCell(), fromPiece));
         whiteTurn = !whiteTurn;
         return ChessCode.OK;
     }
@@ -150,7 +153,12 @@ public class ChessManager {
     public Chessboard getChessboard() {
         return chessboard;
     }
+
+    public List<Movement> getMovements() {
+        return movements;
+    }
     // </editor-fold>  
 
-    
 }
+
+    

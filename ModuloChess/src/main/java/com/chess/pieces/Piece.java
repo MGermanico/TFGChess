@@ -56,6 +56,7 @@ public abstract class Piece extends DisplayableCell{
     
     
     public abstract void addMovements();
+    public abstract String toName();
     
     public int move(Position position, DisplayableCell[][] boardInstance){
         int code;

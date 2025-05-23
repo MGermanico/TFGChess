@@ -51,20 +51,20 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="leftPanel" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="surrenderButton" min="-2" pref="130" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                          <Component id="drawButton" max="32767" attributes="0"/>
+                          <Component id="drawButton" min="-2" pref="130" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="leftPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="rightPanel" max="32767" attributes="0"/>
                       <Component id="commentTextField" pref="270" max="32767" attributes="0"/>
+                      <Component id="rightPanel" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -82,7 +82,7 @@
                           <Component id="commentTextField" min="-2" pref="32" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="leftPanel" pref="253" max="32767" attributes="0"/>
+                          <Component id="leftPanel" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="drawButton" min="-2" pref="32" max="-2" attributes="0"/>

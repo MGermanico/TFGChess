@@ -60,10 +60,14 @@ public class Position {
     public Position clone(){
         return new Position(row, column);
     }
+    
+    public char toStringColumn(){
+        return (char)('h'-this.column);
+    }
 
     @Override
     public String toString() {
-        return "[" + this.column + " , " + this.row + "]";
+        return toStringColumn() + "" + (this.row+1);
     }
 
     @Override

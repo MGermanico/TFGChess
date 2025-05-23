@@ -22,6 +22,11 @@ public class Queen extends Piece{
     public Queen(Position position, boolean white) {
         super(position, white);
     }
+    
+    @Override
+    public String toName(){
+        return "Dama";
+    }
 
     @Override
     public void addMovements() {

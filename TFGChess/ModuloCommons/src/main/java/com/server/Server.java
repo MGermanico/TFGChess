@@ -89,6 +89,7 @@ public class Server {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
         synchronized (players) {
+            con.leaveGame();
             logs.remove(con.getUsername());
             players.remove(con.getUsername());
             System.out.println("cerrada " + players.size());

@@ -72,7 +72,7 @@ public class Game {
             if (code > 0) {
                 return false;
             }
-            chess.setState(code);
+            //chess.setState(code);
         }
         
         String jsonChess;
@@ -191,6 +191,7 @@ public class Game {
                 System.out.println("PIERDE " + looser);
             }
         }
+        Server.removeGame(this);
     }
     
     private enum EXIT_TYPES {WINNER, LOOSER, DRAW};

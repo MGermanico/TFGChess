@@ -23,6 +23,11 @@ public class King extends Piece implements Moved{
     public King(Position position, boolean white) {
         super(position, white);
     }
+    
+    @Override
+    public String toName(){
+        return "Rey";
+    }
 
     @Override
     public void addMovements() {

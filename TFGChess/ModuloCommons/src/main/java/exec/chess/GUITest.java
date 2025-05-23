@@ -8,6 +8,7 @@ package exec.chess;
 
 import com.chess.general.ChessManager;
 import com.chess.general.Chessboard;
+import com.chess.general.Movement;
 import com.chess.general.Position;
 import com.chess.pieces.Blank;
 import com.chess.pieces.DisplayableCell;
@@ -156,6 +157,9 @@ public class GUITest extends javax.swing.JFrame {
     Position lastPos = null;
     
     private void setTablero() {
+        for (Movement movement : this.chess.getMovements()) {
+            System.out.println(movement + "  " + movement.isWhiteMove());
+        }
         this.jPanel1.removeAll();
         DisplayableCell[][] b = board.cloneBoard();
         JButton but;

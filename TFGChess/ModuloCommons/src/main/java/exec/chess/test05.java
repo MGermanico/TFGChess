@@ -4,6 +4,10 @@
  */
 package exec.chess;
 
+import com.chess.general.Movement;
+import com.chess.general.Position;
+import com.chess.pieces.Piece;
+import com.chess.pieces.pieces.Pawn;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,6 +19,8 @@ import javax.swing.JPanel;
  */
 public class test05 {
     public static void main(String[] args) {
-        
+        System.out.println(
+                (char)('h'-7)    
+        );
     }
 }

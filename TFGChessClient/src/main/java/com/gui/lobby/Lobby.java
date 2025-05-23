@@ -7,43 +7,35 @@ package com.gui.lobby;
 import com.gui.general.ChatPanel;
 import com.chess.general.ChessManager;
 import com.chess.general.Chessboard;
+import com.chess.general.Movement;
 import com.chess.general.Position;
 import com.chess.pieces.DisplayableCell;
 import com.chess.pieces.Piece;
-import com.chess.pieces.movements.Movement;
-import com.chess.pieces.pieces.Pawn;
 import com.connutils.Request;
 import com.gui.general.Requestable;
 import com.conn.Client;
 import com.connutils.Action;
 import com.connutils.RequestBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gui.general.principalframe.PrincipalFrame;
-import com.utils.ChessCode;
+import com.gui.principalframe.PrincipalFrame;
 import com.utils.ChessUtils;
 import com.utils.GUIUtils;
 import com.utils.MathUtils;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 
 /**
  *
@@ -59,18 +51,18 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     private String otherUsername;
     private ChessManager chessManager = null;
     private boolean imWhite = false;
-    private int cellSize = 30;
+    private int cellSize = 80;
     private ChatPanel logPanel;
     private ChatPanel chatPanel;
     private Position lastPositionClicked = null;
     
     private List<Action> actions = new ArrayList<Action>(){{
-        add(new PlayerJoinedAction());
-        add(new JoinedAction());
-        add(new UpdateBoardAction());
-        add(new GameMessageAction());
-        add(new DrawAnswerAction());
-        add(new LeaveAction());
+        add(new ActionPlayerJoined(Lobby.this));
+        add(new ActionJoined(Lobby.this));
+        add(new ActionUpdateBoard(Lobby.this));
+        add(new ActionGameMessage(Lobby.this));
+        add(new ActionDrawAnswer(Lobby.this));
+        add(new ActionLeave(Lobby.this));
     }};
     
     public Lobby(PrincipalFrame principalFrame, Request createRequest) {
@@ -365,18 +357,18 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(surrenderButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)
-                        .addComponent(drawButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(drawButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(rightPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(commentTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
+                    .addComponent(commentTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+                    .addComponent(rightPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -390,7 +382,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(commentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                        .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(drawButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -452,7 +444,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         }
     }
     
-    private void addGameMessage(boolean self, String text){
+    void addGameMessage(boolean self, String text){
         String sender;
         Color selfColor;
         Color otherColor;
@@ -490,17 +482,17 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         }
     }
     
-    private void win(){
+    void win(){
         String message = " ¡¡ HAS GANADO !! ";
         JOptionPane.showMessageDialog(Lobby.this, GUIUtils.biggerTextHTML(message));
         exit();
     }
-    private void loose(){
+    void loose(){
         String message = "  ¡ perdiste :( ! ";
         JOptionPane.showMessageDialog(Lobby.this, GUIUtils.biggerTextHTML(message));
         exit();
     }
-    private void draw(){
+    void draw(){
         String message = "¡¡ " + Lobby.this.otherUsername + " HA ACEPTADO LAS TABLAS !!";
         JOptionPane.showMessageDialog(Lobby.this, GUIUtils.biggerTextHTML(message));
         exit();
@@ -525,111 +517,79 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
 
     @Override
     public void gotRequest(Request request) {
-        for (Action action : actions) {
-            if(action.getType().equals(request.getHeader()))
-                action.execute(request);
-        }
+        actions.stream().filter(action -> action.getType().equals(request.getHeader())).forEach(action -> action.execute(request));
+    }
+
+    void playerJoined(String username) {
+        otherUsername = username;
+        surrenderButton.setText("Rendirse");
+        secondPlayerLabel.setText(otherUsername);
+    }
+
+    void joined(String ownerUsername) {
+        otherUsername = ownerUsername;
+        drawButton.setEnabled(true);
+        secondPlayerLabel.setText(otherUsername);
     }
     
-    private class PlayerJoinedAction implements Action{
-        @Override
-        public void execute(Request request) {
-            otherUsername = request.getOrDefault("username", "J2 (no-name)");
-            surrenderButton.setText("Rendirse");
-            secondPlayerLabel.setText(otherUsername);
-        }
-        @Override
-        public String getType() {
-            return "playerjoined";
-        }
+    String getOtherUsername(){
+        return this.otherUsername;
     }
-    private class JoinedAction implements Action{
-        @Override
-        public void execute(Request request) {
-            otherUsername = request.getOrDefault("ownerusername", "J2 (no-name)");
-            drawButton.setEnabled(true);
-            secondPlayerLabel.setText(otherUsername);
+
+    void updateBoardMove(ChessManager newBoard, boolean white) {
+        chessManager = newBoard;
+
+        imWhite = white;
+        Color themeColor = principalFrame.getThemeColor();
+        if (imWhite) {
+            secondPlayerLabel.setBackground(themeColor);
+            secondPlayerLabel.setForeground(Color.LIGHT_GRAY);
+            secondPlayerLabel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 4));
+
+            firstPlayerLabel.setBackground(Color.LIGHT_GRAY);
+            firstPlayerLabel.setForeground(themeColor);
+            firstPlayerLabel.setBorder(BorderFactory.createLineBorder(themeColor, 4));
+        } else {
+            secondPlayerLabel.setBackground(Color.LIGHT_GRAY);
+            secondPlayerLabel.setForeground(themeColor);
+            secondPlayerLabel.setBorder(BorderFactory.createLineBorder(themeColor, 4));
+
+            firstPlayerLabel.setBackground(themeColor);
+            firstPlayerLabel.setForeground(Color.LIGHT_GRAY);
+            firstPlayerLabel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 4));
         }
-        @Override
-        public String getType() {
-            return "joined";
-        }
-    }
-    private class GameMessageAction implements Action{
-        @Override
-        public void execute(Request request) {
-            if (request.contains("message")) {
-                addGameMessage(false, request.get("message"));
-            }
-        }
-        @Override
-        public String getType() {
-            return "gamemessage";
-        }
-    }
-    private class UpdateBoardAction implements Action{
-        @Override
-        public void execute(Request request) {
-            try {
-                chessManager = ChessManager.fromJSON(request.get("board"));
-                
-                imWhite = request.get("white").equals("true");
-                Color themeColor = principalFrame.getThemeColor();
-                if (imWhite) {
-                    secondPlayerLabel.setBackground(themeColor);
-                    secondPlayerLabel.setForeground(Color.LIGHT_GRAY);
-                    secondPlayerLabel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 4));
-                    
-                    firstPlayerLabel.setBackground(Color.LIGHT_GRAY);
-                    firstPlayerLabel.setForeground(themeColor);
-                    firstPlayerLabel.setBorder(BorderFactory.createLineBorder(themeColor, 4));
-                }else{
-                    secondPlayerLabel.setBackground(Color.LIGHT_GRAY);
-                    secondPlayerLabel.setForeground(themeColor);
-                    secondPlayerLabel.setBorder(BorderFactory.createLineBorder(themeColor, 4));
-                    
-                    firstPlayerLabel.setBackground(themeColor);
-                    firstPlayerLabel.setForeground(Color.LIGHT_GRAY);
-                    firstPlayerLabel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 4));
-                }
-                updateBoard();
-                principalFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            } catch (JsonProcessingException ex) {
-                Logger.getLogger(Lobby.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        @Override
-        public String getType() {
-            return "updatedBoard";
-        }
-    }
-    private class DrawAnswerAction implements Action{
-        @Override
-        public void execute(Request request) {
-            if (request.getOrDefault("accepteddraw", "false").equals("true")) {
-                draw();
+        updateBoard();
+        updateMovements(newBoard.getMovements());
+        principalFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        if (chessManager.getState() == ChessManager.STATE_BLACK_WON) {
+            if (imWhite) {
+                loose();
             }else{
-                String message = Lobby.this.otherUsername + " ha denegado las tablas";
-                JOptionPane.showMessageDialog(Lobby.this, GUIUtils.biggerTextHTML(message));
+                win();
             }
-        }
-        @Override
-        public String getType() {
-            return "drawanswer";
-        }
-    }
-    private class LeaveAction implements Action{
-        @Override
-        public void execute(Request request) {
-            if (request.getOrDefault("won", "false").equals("true")) {
+        }else if (chessManager.getState() == ChessManager.STATE_WHITE_WON) {
+            if (imWhite) {
                 win();
             }else{
                 loose();
             }
-        }
-        @Override
-        public String getType() {
-            return "leave";
+        }else if (chessManager.getState() == ChessManager.STATE_DRAW) {
+            draw();
         }
     }
+
+    private void updateMovements(List<Movement> movements) {
+        this.logPanel.clear();
+        movements.stream().forEach(move -> {
+            Color movementColor = principalFrame.getThemeColor();
+            Color foregroundMovementColor = Color.LIGHT_GRAY;
+            if (move.isWhiteMove()){
+                movementColor = Color.LIGHT_GRAY;
+                foregroundMovementColor = principalFrame.getThemeColor();
+            }
+            this.logPanel.addText(null, move.toString(), movementColor, foregroundMovementColor);
+        });
+    }
+    
 }

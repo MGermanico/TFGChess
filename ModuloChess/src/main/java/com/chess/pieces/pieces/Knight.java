@@ -20,6 +20,11 @@ public class Knight extends Piece{
     public Knight(Position position, boolean white) {
         super(position, white);
     }
+    
+    @Override
+    public String toName(){
+        return "Caballo";
+    }
 
     @Override
     public void addMovements() {

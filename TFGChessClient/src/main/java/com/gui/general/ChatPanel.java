@@ -30,8 +30,7 @@ public class ChatPanel extends javax.swing.JPanel {
     }
     
     public void clear(){
-        for (int i = 0; i < this.getComponentCount(); i++) {
-            this.remove(0);
+        while(this.getComponentCount() > 0){
             this.remove(0);
         }
         this.validate();
@@ -41,11 +40,11 @@ public class ChatPanel extends javax.swing.JPanel {
         JPanel textPanel = new JPanel();      
         int[] nLines = new int[]{1};
         
-        int extraSize = 0;
+        int extraSize = 27;
         String titleText = "";
         if (title != null && !title.isBlank()) {
             titleText = "<span style=\"font-weight: bold; font-size: large;\">"+ title +"</span><br>";
-            extraSize += 57;
+            extraSize += 30;
         }
         
         JLabel textLabel = new JLabel();
@@ -54,7 +53,7 @@ public class ChatPanel extends javax.swing.JPanel {
         textLabel.setForeground(foreground);
         textLabel.setHorizontalAlignment(SwingConstants.LEFT);
         textPanel.setBackground(color);
-        Dimension labelDimension = new Dimension(230, 17*nLines[0] + extraSize - 20);
+        Dimension labelDimension = new Dimension(230, 17*nLines[0] + extraSize - 30);
         Dimension panelDimension = new Dimension(250, 17*nLines[0] + extraSize);
         textLabel.setSize(labelDimension);
         textLabel.setPreferredSize(labelDimension);

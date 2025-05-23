@@ -188,6 +188,12 @@ public class ClientConn implements Closeable{
             Logger.getLogger(ClientConn.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    void leaveGame() {
+        if (game != null) {
+            game.endGame(this);
+        }
+    }
     
     private abstract class FailableAction implements Action{
         protected String errorMessage = null;

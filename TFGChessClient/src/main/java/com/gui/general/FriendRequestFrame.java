@@ -4,7 +4,7 @@
  */
 package com.gui.general;
 
-import com.gui.general.menu.Menu;
+import com.gui.menu.Menu;
 import com.connutils.RequestBuilder;
 import com.conn.Client;
 import com.fasterxml.jackson.core.JsonProcessingException;

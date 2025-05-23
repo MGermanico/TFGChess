@@ -29,6 +29,11 @@ public class Pawn extends Piece implements Moved{
     private VerticalMovement verticalMove;
     
     @Override
+    public String toName(){
+        return "Peón";
+    }
+    
+    @Override
     public void addMovements() {
         verticalMove = new VerticalMovement(white, 2);
         DiagonalMovement diagonalRightMove = new DiagonalMovement(white, true, 1);

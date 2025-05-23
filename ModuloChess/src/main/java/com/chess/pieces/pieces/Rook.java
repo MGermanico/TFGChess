@@ -22,6 +22,11 @@ public class Rook extends Piece  implements Moved{
     public Rook(Position position, boolean white) {
         super(position, white);
     }
+    
+    @Override
+    public String toName(){
+        return "Torre";
+    }
 
     @Override
     public void addMovements() {

@@ -33,6 +33,11 @@ public class Bishop extends Piece{
         getMovements().add(downRightDiagonalMovement);
         getMovements().add(downLeftDiagonalMovement);
     }
+    
+    @Override
+    public String toName(){
+        return "Alifl";
+    }
 
     @Override
     public DisplayableCell clone() {
