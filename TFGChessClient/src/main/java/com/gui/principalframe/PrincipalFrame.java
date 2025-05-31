@@ -17,6 +17,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.Optional;
 import javax.swing.JFrame;
@@ -35,15 +36,23 @@ public class PrincipalFrame extends JFrame implements Requestable{
         SETUP_REGISTER,
         SETUP_MENU,
         SETUP_CREATE_GAME,
-        SETUP_JOIN_GAME
+        SETUP_JOIN_GAME,
+        SETUP_ACCOUNT
+    };
+    public static enum SIZE {
+        SIZE_SMALL,
+        SIZE_MEDIUM,
+        SIZE_FULLSCREEN
     };
     
     JPanel back;
     Color themeColor;
+    SIZE boardSize;
     
     public PrincipalFrame() throws HeadlessException, IOException {
         back = new JPanel();
         themeColor = new Color(0, 0, 51);
+        setBoardSize(SIZE.SIZE_FULLSCREEN);
         
         this.setVisible(true);
         this.add(back);
@@ -81,7 +90,29 @@ public class PrincipalFrame extends JFrame implements Requestable{
         }
     }
 
+    public SIZE getBoardSize() {
+       return this.boardSize;
+    }
+    public Dimension getBoardDimension() {
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        if (boardSize == SIZE.SIZE_SMALL) {
+            d.setSize(d.getWidth()*0.5, d.getHeight()*0.25 + 150);
+        }else if (boardSize == SIZE.SIZE_MEDIUM) {
+            d.setSize(d.getWidth()*0.55 + 50, d.getHeight()*0.5 + 50);
+        }
+        return d;
+    }
+
+    public void setBoardSize(SIZE boardSize) {
+        this.boardSize = boardSize;
+    }
+    
     public Color getThemeColor() {
         return themeColor;
     }
+    
+    public void setThemeColor(Color color) {
+        this.themeColor = color;
+    }
+    
 }

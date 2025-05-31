@@ -20,6 +20,7 @@ class SetUpFactory {
         put(PrincipalFrame.SETUP.SETUP_MENU, new SetUpMenuCommand());
         put(PrincipalFrame.SETUP.SETUP_CREATE_GAME, new SetUpCreateGameCommand());
         put(PrincipalFrame.SETUP.SETUP_JOIN_GAME, new SetUpJoinGameCommand());
+        put(PrincipalFrame.SETUP.SETUP_ACCOUNT, new SetUpAccountCommand());
     }};
     
     static Optional<SetUpCommand> getSetUpCommand(PrincipalFrame.SETUP type) {

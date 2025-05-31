@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 /**
@@ -50,6 +51,7 @@ public class Menu extends javax.swing.JPanel implements Requestable{
     public Menu(PrincipalFrame principalFrame) {
         this.principalFrame = principalFrame;
         initComponents();
+        updateButtons();
         updateFriends();
     }
 
@@ -113,6 +115,11 @@ public class Menu extends javax.swing.JPanel implements Requestable{
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton1.setText("Cuenta");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton2.setText("Historial");
@@ -249,6 +256,10 @@ public class Menu extends javax.swing.JPanel implements Requestable{
         }
     }//GEN-LAST:event_showFriendRequestButtonActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.principalFrame.setUp(PrincipalFrame.SETUP.SETUP_ACCOUNT);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton friendRequestButton;
@@ -336,5 +347,10 @@ public class Menu extends javax.swing.JPanel implements Requestable{
     void openFriendRequest(List<String> playerUsernames){
         new FriendRequestFrame(principalFrame, playerUsernames, java.awt.MouseInfo.getPointerInfo().getLocation());
         updateFriends();
+    }
+
+    private void updateButtons() {
+        List.of(this.jButton1,this.jButton2,this.jButton3,this.jButton4,this.friendRequestButton,this.showFriendRequestButton)
+                .stream().forEach(b -> b.setBackground(principalFrame.getThemeColor()));
     }
 }

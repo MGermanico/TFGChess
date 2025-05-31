@@ -13,7 +13,7 @@ import com.connutils.Request;
  */
 
 class ActionLoged implements Action{
-    private Register register;
+    private final Register register;
     
     public ActionLoged(Register register) {
         this.register = register;
@@ -21,7 +21,6 @@ class ActionLoged implements Action{
 
     @Override
     public void execute(Request request) {
-        System.out.println("logggggggggggggggged");
         this.register.loged();
     }
 

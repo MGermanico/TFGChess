@@ -51,7 +51,7 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     private String otherUsername;
     private ChessManager chessManager = null;
     private boolean imWhite = false;
-    private int cellSize = 80;
+    private int cellSize;
     private ChatPanel logPanel;
     private ChatPanel chatPanel;
     private Position lastPositionClicked = null;
@@ -66,9 +66,13 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     }};
     
     public Lobby(PrincipalFrame principalFrame, Request createRequest) {
-//        principalFrame.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
-//        System.out.println(principalFrame.getSize());
-        principalFrame.setSize((int) (cellSize * 22.776), (int) (cellSize * 12.423));
+        cellSize = 80;
+        if (principalFrame.getBoardSize() == PrincipalFrame.SIZE.SIZE_MEDIUM){
+            cellSize = (int) (80*0.5);
+        }else if (principalFrame.getBoardSize() == PrincipalFrame.SIZE.SIZE_SMALL){
+            cellSize = (int) (80*0.25);
+        }
+//        principalFrame.setSize((int) (cellSize * 22.776), (int) (cellSize * 12.423));
         this.otherUsername = "J2 (no-name)";
         this.principalFrame = principalFrame;
         initComponents();
@@ -560,7 +564,16 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
         }
         updateBoard();
         updateMovements(newBoard.getMovements());
-        principalFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        cellSize = 80;
+        if (principalFrame.getBoardSize() == PrincipalFrame.SIZE.SIZE_MEDIUM){
+            cellSize = (int) (80*0.75);
+        }else if (principalFrame.getBoardSize() == PrincipalFrame.SIZE.SIZE_SMALL){
+            cellSize = (int) (80*0.5);
+        }
+        System.out.println(principalFrame.getBoardDimension().toString());
+        principalFrame.setSize(principalFrame.getBoardDimension());
+        this.validate();
+//        principalFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         
         if (chessManager.getState() == ChessManager.STATE_BLACK_WON) {
             if (imWhite) {

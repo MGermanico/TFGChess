@@ -9,9 +9,11 @@ com\gui\menu\ChatFrame.class
 com\gui\lobby\ActionLeave.class
 com\gui\principalframe\PrincipalFrame.class
 com\gui\creategame\CreateGame$3.class
+com\gui\principalframe\SetUpAccountCommand.class
 com\gui\principalframe\SetUpJoinGameCommand.class
 com\gui\register\Register$3.class
 com\gui\joingame\JoinGame$2.class
+com\gui\account\Account$3.class
 com\gui\lobby\ActionGameMessage.class
 com\gui\login\Login$4.class
 com\gui\register\Register$6.class
@@ -24,6 +26,7 @@ com\gui\creategame\ActionFailed.class
 com\gui\login\ActionLoged.class
 com\gui\menu\ActionChatLog.class
 com\gui\principalframe\SetUpFactory.class
+com\gui\menu\Menu$8.class
 com\gui\menu\Menu$1.class
 com\gui\register\Register$5.class
 com\gui\principalframe\SetUpMenuCommand.class
@@ -39,6 +42,7 @@ com\gui\menu\Friend.class
 com\gui\login\Login.class
 com\gui\register\Register.class
 com\gui\login\Login$2.class
+com\gui\principalframe\PrincipalFrame$SIZE.class
 com\gui\joingame\ActionFailed.class
 com\gui\principalframe\PrincipalFrame$SETUP.class
 com\gui\register\Register$4.class
@@ -63,6 +67,7 @@ com\gui\lobby\Lobby$4.class
 com\gui\menu\ChatFrame$1.class
 com\gui\menu\Menu$5.class
 com\gui\joingame\JoinGame$1.class
+com\gui\account\Account$2.class
 com\gui\menu\ActionPutFriendRequests.class
 com\gui\register\ActionExit.class
 com\gui\creategame\CreateGame$1.class
@@ -73,5 +78,7 @@ com\conn\Client.class
 com\gui\register\Register$1.class
 com\gui\general\DisplayableFriendRequestBuilder$1.class
 com\gui\principalframe\SetUpFactory$1.class
+com\gui\account\Account$1.class
+com\gui\account\Account.class
 com\gui\menu\Menu$4.class
 com\gui\menu\Menu.class
