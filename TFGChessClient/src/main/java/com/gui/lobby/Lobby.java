@@ -68,10 +68,12 @@ public class Lobby extends javax.swing.JPanel implements Requestable{
     public Lobby(PrincipalFrame principalFrame, Request createRequest) {
         cellSize = 80;
         if (principalFrame.getBoardSize() == PrincipalFrame.SIZE.SIZE_MEDIUM){
-            cellSize = (int) (80*0.5);
+            cellSize = (int) (80*0.75);
         }else if (principalFrame.getBoardSize() == PrincipalFrame.SIZE.SIZE_SMALL){
-            cellSize = (int) (80*0.25);
+            cellSize = (int) (80*0.5);
         }
+        System.out.println(principalFrame.getBoardDimension().toString());
+        principalFrame.setSize(principalFrame.getBoardDimension());
 //        principalFrame.setSize((int) (cellSize * 22.776), (int) (cellSize * 12.423));
         this.otherUsername = "J2 (no-name)";
         this.principalFrame = principalFrame;

@@ -61,6 +61,7 @@ public class PrincipalFrame extends JFrame implements Requestable{
         back.setBackground(new Color(51, 51, 51));
 //        this.setResizable(false);
         setUp(SETUP.SETUP_LOGIN);
+        this.setLocationRelativeTo(null);
     }
     
     public void setUp(SETUP type) {
@@ -74,7 +75,7 @@ public class PrincipalFrame extends JFrame implements Requestable{
         back.removeAll();
         back.add(lobby);
         this.pack();
-        this.setLocationRelativeTo(null);
+//        this.setLocationRelativeTo(null);
         back.validate();
         back.repaint();
     }
@@ -96,9 +97,9 @@ public class PrincipalFrame extends JFrame implements Requestable{
     public Dimension getBoardDimension() {
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         if (boardSize == SIZE.SIZE_SMALL) {
-            d.setSize(d.getWidth()*0.5, d.getHeight()*0.25 + 150);
+            d.setSize(d.getWidth()*0.5 + 150, d.getHeight()*0.25 + 325);
         }else if (boardSize == SIZE.SIZE_MEDIUM) {
-            d.setSize(d.getWidth()*0.55 + 50, d.getHeight()*0.5 + 50);
+            d.setSize(d.getWidth()*0.55 + 300, d.getHeight()*0.5 + 250);
         }
         return d;
     }

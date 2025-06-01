@@ -27,7 +27,7 @@ public abstract class SetUpCommand {
         frame.back.add(action(frame));
         
         frame.setSize(frameSize);
-        frame.setLocationRelativeTo(null);
+//        frame.setLocationRelativeTo(null);
         frame.back.validate();
         frame.back.repaint();
     }

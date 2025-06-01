@@ -1,5 +1,4 @@
 com\gui\lobby\Lobby$2.class
-com\gui\register\ActionLoged.class
 com\gui\menu\Menu$7.class
 com\gui\principalframe\SetUpCreateGameCommand.class
 com\gui\lobby\ActionPlayerJoined.class
@@ -16,7 +15,6 @@ com\gui\joingame\JoinGame$2.class
 com\gui\account\Account$3.class
 com\gui\lobby\ActionGameMessage.class
 com\gui\login\Login$4.class
-com\gui\register\Register$6.class
 com\gui\login\Login$1.class
 com\gui\menu\Menu$2.class
 com\gui\creategame\CreateGame.class

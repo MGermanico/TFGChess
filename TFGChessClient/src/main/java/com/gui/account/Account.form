@@ -69,7 +69,7 @@
             <StringItem index="0" value="Pantalla completa"/>
             <StringItem index="1" value="Medio"/>
             <StringItem index="2" value="Peque&#xf1;o"/>
-            <StringItem index="3" value=" "/>
+            <StringItem index="3" value=""/>
           </StringArray>
         </Property>
       </Properties>

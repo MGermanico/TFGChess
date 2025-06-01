@@ -47,7 +47,7 @@ public class Account extends javax.swing.JPanel {
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pantalla completa", "Medio", "Pequeño", " " }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pantalla completa", "Medio", "Pequeño", "" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -136,5 +136,12 @@ public class Account extends javax.swing.JPanel {
 
     private void initComboBox() {
         this.jComboBox1.setBackground(this.principalFrame.getThemeColor());
+        if (this.principalFrame.getBoardSize() == PrincipalFrame.SIZE.SIZE_FULLSCREEN) {
+            this.jComboBox1.setSelectedIndex(0);
+        }else if (this.principalFrame.getBoardSize() == PrincipalFrame.SIZE.SIZE_MEDIUM) {
+            this.jComboBox1.setSelectedIndex(1);
+        }else if (this.principalFrame.getBoardSize() == PrincipalFrame.SIZE.SIZE_SMALL) {
+            this.jComboBox1.setSelectedIndex(2);
+        }
     }
 }
